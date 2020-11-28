@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer</title>
+
+    <style>
+        body {
+            height: 98vh;
+            background: rgb(2, 0, 35);
+            background: radial-gradient(circle, rgba(2, 0, 35, 1) 0%, rgba(0, 0, 0, 1) 100%);
+
+            color: rgb(221, 221, 221);
+            font-family: 'JetBrains Mono', Courier, monospace;
+            font-weight: 800;
+            font-size: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pause {
+            text-align: center;
+            font-size: 42px;
+            color: rgb(152, 241, 241);
+        }
+
+        .root {
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 74px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <p class="pause">Перерыв</p>
+        <div class="root"></div>
+    </div>
+
+    <script>
+        const root = document.querySelector('.root');
+        const pause = document.querySelector('.pause');
+
+        const removeElement = (className) => {
+            const tag = root.querySelector(`.${className}`);
+            tag && tag.remove();
+        }
+
+        const formatTime = (timeInSeconds) => {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = timeInSeconds % 60;
+            return `0${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        }
+
+        const startTimer = (evt) => {
+            let timeInSeconds = 300;
+
+            removeElement('continue');
+            removeElement('timer');
+
+            root.insertAdjacentHTML('afterbegin', `<p class="timer">05:00</p>`);
+            const timer = root.querySelector('.timer');
+
+            const interval = setInterval(() => {
+                timeInSeconds -= 1;
+
+                if (timeInSeconds <= 0) {
+                    removeElement('timer');
+                    pause.remove();
+                    root.insertAdjacentHTML('afterbegin', `<p class="continue">Продолжаем!</p>`);
+
+                    clearInterval(interval);
+                }
+
+                timer.innerText = formatTime(timeInSeconds);
+            }, 1000);
+
+            return interval;
+        }
+
+        let intervalId = 0;
+
+        root.insertAdjacentHTML('afterbegin', `<p class="timer">05:00</p>`);
+
+        document.addEventListener('click', () => {
+            intervalId && clearInterval(intervalId);
+            intervalId = startTimer();
+        });
+    </script>
+</body>
+
+</html>
